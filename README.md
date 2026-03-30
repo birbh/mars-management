@@ -1,6 +1,6 @@
 # Mars Haven system
 
-Mars Haven is a role based PHP and MySQL web app that impreves monitoring a Mars habitat during diff. conditions.
+Mars Haven is a role based PHP and MySQL web app that improves monitoring a Mars habitat during diff. conditions.
 
 The project was built as a full-stack application project....
 
