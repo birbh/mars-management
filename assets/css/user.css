@@ -1,0 +1,52 @@
+#refresh_note {
+    margin: 0;
+}
+
+.user_summary_grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.user_activity_section {
+    margin-bottom: 10px;
+}
+ 
+.user_small_chart {
+    height: 170px;
+}
+
+.events_list {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.events_list li {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 8px;
+    display: grid;
+    gap: 4px;
+}
+
+.events_time {
+    color: var(--text_dim);
+    font-size: 0.75rem;
+}
+
+.events_text {
+    color: var(--text_main);
+    font-size: 0.84rem;
+}
+
+@media (max-width: 900px) {
+    .user_summary_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .user_small_chart {
+        height: 150px;
+    }
+}

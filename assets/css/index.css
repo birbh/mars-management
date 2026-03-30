@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+    --bg: #0f1720;
+    --panel: #161e2a;
+    --line: #2a3442;
+    --text: #d6dde6;
+    --text_dim: #9eabb9;
+    --accent: #4da3ff;
+    --safe: #66c987;
+    --warning: #e1a64a;
+    --danger: #e0646d;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+.telemetry_shell {
+    width: min(1240px, calc(100% - 26px));
+    margin: 12px auto 16px;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+    padding: 10px 12px;
+    animation: panel_in 0.35s ease both;
+}
+
+.panel_head {
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+}
+ 
+.panel_body {
+    color: var(--text);
+    font-size: 0.9rem;
+    line-height: 1.42;
+}
+
+.telemetry_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.header_body {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.sound_toggle {
+    background: #111923;
+    border: 1px solid var(--line);
+    color: var(--text_dim);
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-size: 0.76rem;
+    cursor: pointer;
+}
+
+.sound_toggle:hover {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+.access_btn {
+    text-decoration: none;
+    color: var(--text);
+    background: #1b2533;
+    border: 1px solid var(--line);
+    padding: 7px 10px;
+    font-size: 0.82rem;
+}
+
+.status_strip {
+    margin-bottom: 10px;
+}
+
+.strip_row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    color: var(--text_dim);
+}
+
+.telemetry_grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.storm_monitor,
+.rad_status,
+.pwr_system,
+.sys_health {
+    grid-column: span 3;
+}
+
+.event_log {
+    grid-column: span 12;
+}
+
+.login_access {
+    grid-column: span 4;
+}
+
+.login_body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.health_bar {
+    width: 100%;
+    height: 14px;
+    border: 1px solid var(--line);
+    background: #08111d;
+    margin-top: 8px;
+}
+
+.health_fill {
+    height: 100%;
+    transition: width 0.45s ease;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+}
+
+th,
+td {
+    border: 1px solid var(--line);
+    padding: 7px 9px;
+    font-size: 0.84rem;
+    text-align: left;
+}
+
+th {
+    color: var(--text_dim);
+    background: #1a2432;
+    font-weight: 500;
+}
+
+tr:nth-child(even) {
+    background: #182230;
+}
+
+.status-safe { color: var(--safe); }
+.status-warning { color: var(--warning); }
+.status-danger { color: var(--danger); }
+
+.status_safe { color: var(--safe); }
+.status_warn { color: var(--warning); }
+.status_danger { color: var(--danger); }
+
+.pulse-danger {
+    animation: pulse_slow 2s ease-in-out infinite;
+}
+
+.pulse_danger {
+    animation: pulse_slow 2s ease-in-out infinite;
+}
+
+.telemetry_footer,
+.site_footer {
+    width: min(1240px, calc(100% - 26px));
+    margin: 12px auto 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: var(--text_dim);
+    font-size: 0.8rem;
+}
+
+@keyframes panel_in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse_slow {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+@media (max-width: 980px) {
+    .storm_monitor,
+    .rad_status,
+    .pwr_system,
+    .sys_health,
+    .event_log,
+    .login_access {
+        grid-column: span 12;
+    }
+
+    .telemetry_header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}

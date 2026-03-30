@@ -1,0 +1,48 @@
+#refresh_note_astro {
+    margin: 0;
+}
+
+.emergency_alert {
+    display: none;
+    margin: 0 0 10px;
+    border: 1px solid rgba(239, 68, 68, 0.7);
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 9px 10px;
+    border-radius: 4px;
+}
+ 
+.emergency_alert.is_active {
+    display: block;
+}
+
+.emergency_meta {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.emergency_ack {
+    border: 1px solid rgba(239, 68, 68, 0.7);
+    background: transparent;
+    color: #ef4444;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.74rem;
+}
+
+.emergency_ack:hover {
+    border-color: #ef4444;
+    color: #ff6b6b;
+}
+
+.emergency_alert.is_acknowledged {
+    border-color: rgba(245, 158, 11, 0.6);
+    background: rgba(245, 158, 11, 0.08);
+    color: #f59e0b;
+}
