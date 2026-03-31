@@ -1,13 +1,26 @@
 <?php
-require_once dirname(__DIR__)."/includes/auth_api.php";
+require_once dirname(__DIR__) . '/includes/auth_api.php';
 api_require_login();
-$storm=db_fetch_one(
+
+$storm = db_fetch_one(
     $conn,
-    "SELECT id,intensity,description,created_at FROM solar_storms ORDER BY created_at DESC LIMIT 1",
+    'SELECT id, intensity, description, created_at FROM solar_storms ORDER BY created_at DESC LIMIT 1'
 );
-$radiation=db_fetch_one($conn,"SELECT id,strom_id,radiation_level,status,created_at FROM radiation_logs ORDER BY created_at DESC LIMIT 1",);
-$power=db_fetch_one($conn,"SELECT id,storm_id,solar_output,battery_level,mode,crested_at FROM power_logs ORDER BY created_at DESC LIMIT 1",);
-$events=db_fetch_all($conn,"SELECT event_type,notes,created_at FROM events ORDER BY created_at DESC LIMIT 10 ")
+
+$radiation = db_fetch_one(
+    $conn,
+    'SELECT id, storm_id, radiation_level, status, created_at FROM radiation_logs ORDER BY created_at DESC LIMIT 1'
+);
+
+$power = db_fetch_one(
+    $conn,
+    'SELECT id, storm_id, solar_output, battery_level, mode, created_at FROM power_logs ORDER BY created_at DESC LIMIT 1'
+);
+
+$events = db_fetch_all(
+    $conn,
+    'SELECT event_type, notes, created_at FROM events ORDER BY created_at DESC LIMIT 10'
+);
 $health=100;
 if($radiation){
     if($radiation["status"] === "danger")

@@ -1,10 +1,12 @@
 <?php
-    if(session_status()==PHP_SESSION_NONE){
-        session_start();
-    };
-    header("Content-type:application/json;charset=UTF8");
-    require_once dirname(__DIR__,2)."../config/db.php";
-    require_once dirname(__DIR__,2)."../lib/db_tools.php";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+header('Content-Type: application/json; charset=utf-8');
+
+require_once dirname(__DIR__, 2) . '/config/db.php';
+require_once dirname(__DIR__, 2) . '/lib/db_tools.php';
     function api_json($data,int $status=200):void{
         http_response_code($status);
         echo json_encode($data,JSON_UNESCAPED_SLASHES);
@@ -30,19 +32,3 @@
     }
 
 
-// function api_fail(string $message, int $status = 400, array $meta = []): void
-// {
-//     api_json(
-//         ["success" => false, "error" => $message, "meta" => $meta],
-//         $status,
-//     );
-// }
-// function api_input_json(): array
-// {
-//     $raw = file_get_contents("php://input");
-//     if (!$raw) {
-//         return [];
-//     }
-//     $decoded = json_decode($raw, true);
-//     return is_array($decoded) ? $decoded : [];
-// }
