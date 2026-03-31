@@ -29,6 +29,24 @@ start_auto_ref({
     }
 });
 
-if (typeof load_admin_charts === 'function') {
+if (typeof window.mars_api_bridge_ready !== 'undefined' && typeof window.mars_api_bridge_ready.then === 'function') {
+    window.mars_api_bridge_ready.then(function () {
+        if (typeof load_admin_charts === 'function') {
+            load_admin_charts();
+        }
+    });
+} else if (typeof load_admin_charts === 'function') {
     load_admin_charts();
 }
+
+window.addEventListener('mars_api_bridge_updated', function () {
+    if (typeof load_admin_charts === 'function') {
+        load_admin_charts();
+    }
+});
+
+setInterval(function () {
+    if (typeof load_admin_charts === 'function' && !document.hidden) {
+        load_admin_charts();
+    }
+}, 5000);

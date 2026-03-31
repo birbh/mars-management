@@ -238,17 +238,27 @@ if ($health < 40) {
                         <th>Event</th>
                         <th>Severity</th>
                     </tr>
-                    <?php foreach ($event_log as $event): ?>
-                        <?php $severity_class = event_severity_cls($event['event_type'], $event['notes']); ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($event['created_at']); ?></td>
-                            <td><?php echo htmlspecialchars($event['event_type']); ?></td>
-                            <td><span class="status_badge <?php echo $severity_class; ?>"><?php echo event_severity_label($event['event_type'], $event['notes']); ?></span></td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <tbody id="astro_event_rows">
+                        <?php foreach ($event_log as $event): ?>
+                            <?php $severity_class = event_severity_cls($event['event_type'], $event['notes']); ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($event['created_at']); ?></td>
+                                <td><?php echo htmlspecialchars($event['event_type']); ?></td>
+                                <td><span class="status_badge <?php echo $severity_class; ?>"><?php echo event_severity_label($event['event_type'], $event['notes']); ?></span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
                 </table>
             <?php else: ?>
-                <p>No events logged.</p>
+                <table class="events_table telemetry_table">
+                    <tr>
+                        <th>Time</th>
+                        <th>Event</th>
+                        <th>Severity</th>
+                    </tr>
+                    <tbody id="astro_event_rows"></tbody>
+                </table>
+                <p id="astro_event_empty">No events logged.</p>
             <?php endif; ?>
         </div>
     </article>
@@ -257,7 +267,9 @@ if ($health < 40) {
 <?php if (!$is_refresh): ?>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../assets/js/api_client.js"></script>
 <script src="../assets/js/astro_charts.js"></script>
+<script src="../assets/js/chart_api_bridge.js"></script>
 <script src="../assets/js/auto_refresh.js"></script>
 <script src="../assets/js/astro.js"></script>
 <?php include '../includes/footer.php'; ?>

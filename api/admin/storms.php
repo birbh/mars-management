@@ -24,7 +24,7 @@ if ($method === 'POST') {
     if($rad_status==='danger'){
         db_insert_event_cooldown_storm($conn,$storm_id,'Emergency Shelter Activated','Radiation exceeded safe threshold.',5);
     }
-    $rad_stmt=db_run_stmt($conn,'INSERT INTO radiation_logs(storm_id,radiation_level,status) VALUES (?,?,?)','ida',[$storm_id,$rad_lvl,$rad_status]);
+    $rad_stmt=db_run_stmt($conn,'INSERT INTO radiation_logs(storm_id,radiation_level,status) VALUES (?,?,?)','ids',[$storm_id,$rad_lvl,$rad_status]);
     if($rad_stmt){
         $rad_stmt->close();
 
@@ -55,8 +55,8 @@ if($method==='PUT'){
     if(!$stmt){
         api_fail('Failed to update storm record.',500);
     }
-    $stmt->close();
     $affected=$stmt->affected_rows;
+    $stmt->close();
     $stmt=null;
     api_ok(['updated'=>$affected>0]);
 
@@ -68,6 +68,21 @@ if($method==='DELETE'){
         api_fail('Invalid storm id.',422);
 
     }
+    // Remove child records first so delete works even if FK is RESTRICT in existing DB.
+    $cleanup_queries = [
+        'DELETE FROM events WHERE storm_id = ?',
+        'DELETE FROM radiation_logs WHERE storm_id = ?',
+        'DELETE FROM power_logs WHERE storm_id = ?'
+    ];
+
+    foreach ($cleanup_queries as $sql) {
+        $cleanup_stmt = db_run_stmt($conn, $sql, 'i', [$storm_id]);
+        if (!$cleanup_stmt) {
+            api_fail('Failed to delete linked storm records.',500);
+        }
+        $cleanup_stmt->close();
+    }
+
     $stmt=db_run_stmt($conn,'DELETE FROM solar_storms WHERE id=? LIMIT 1','i',[$storm_id]);
     if(!$stmt){
         api_fail('Failed to delete storm record.',500);
@@ -78,3 +93,7 @@ if($method==='DELETE'){
 
 }
 api_fail('Method not allowed',405);
+
+
+
+

@@ -439,11 +439,9 @@ function event_severity_label($event_type, $notes)
     <article class="panel mod_admin_form">
     <h2 class="panel_head">Storm Management</h2>
     <div class="panel_body">
-    <form method="POST" class="admin_form">
+    <form id="admin_storm_form" class="admin_form">
         <input type="hidden" name="action" value="<?php echo $edit_row ? 'update' : 'create'; ?>">
-        <?php if ($edit_row): ?>
-            <input type="hidden" name="storm_id" value="<?php echo (int) $edit_row['id']; ?>">
-        <?php endif; ?>
+        <input type="hidden" name="storm_id" value="<?php echo $edit_row ? (int) $edit_row['id'] : ''; ?>">
 
         <label for="storm_lvl">Storm intensity (1-10)</label>
         <input id="storm_lvl" type="number" name="storm_lvl" min="1" max="10" required value="<?php echo $edit_row ? (int) $edit_row['intensity'] : ''; ?>">
@@ -452,10 +450,8 @@ function event_severity_label($event_type, $notes)
         <textarea id="storm_desc" name="storm_desc" placeholder="Describe storm condition"><?php echo $edit_row ? htmlspecialchars($edit_row['description']) : ''; ?></textarea>
 
         <div class="btn_row">
-            <input type="submit" value="<?php echo $edit_row ? 'Update Storm' : 'Create Storm'; ?>">
-            <?php if ($edit_row): ?>
-                <a class="btn_link" href="admin.php">Cancel Edit</a>
-            <?php endif; ?>
+            <input id="storm_submit_btn" type="submit" value="<?php echo $edit_row ? 'Update Storm' : 'Create Storm'; ?>">
+            <button id="cancel_edit_btn" type="button" class="btn_link" <?php echo $edit_row ? '' : 'style="display:none;"'; ?>>Cancel Edit</button>
         </div>
     </form>
     </div>
@@ -478,7 +474,7 @@ function event_severity_label($event_type, $notes)
         <input id="search" type="text" name="search" value="<?php echo htmlspecialchars($search_text); ?>" placeholder="Description contains">
 
         <button type="submit">Apply</button>
-        <a class="btn_link" href="admin.php">Clear</a>
+        <a class="btn_link js-filter-clear" href="admin.php">Clear</a>
     </form>
 
 <?php
@@ -499,6 +495,7 @@ function event_severity_label($event_type, $notes)
         foreach ($storm_rows as $row) {
             $row_id = (int) $row['id'];
             $edit_link = admin_url(['edit_id' => $row_id, 'page' => $page]);
+            $desc_attr = htmlspecialchars($row['description'], ENT_QUOTES);
 
             echo "<tr>
             <td>".$row_id."</td>
@@ -507,12 +504,8 @@ function event_severity_label($event_type, $notes)
             <td>".htmlspecialchars($row['created_at'])."</td>
             <td>
                 <div class='table_action'>
-                    <a class='btn_link small' href='".htmlspecialchars($edit_link)."'>Edit</a>
-                    <form method='POST' class='inline_form'>
-                        <input type='hidden' name='action' value='delete'>
-                        <input type='hidden' name='storm_id' value='".$row_id."'>
-                        <button type='submit' class='btn_link small danger'>Delete</button>
-                    </form>
+                    <a class='btn_link small js-edit-storm' href='".htmlspecialchars($edit_link)."' data-storm-id='".$row_id."' data-storm-intensity='".(int) $row['intensity']."' data-storm-desc='".$desc_attr."'>Edit</a>
+                    <button type='button' class='btn_link small danger js-delete-storm' data-storm-id='".$row_id."'>Delete</button>
                 </div>
             </td>
             </tr>";
@@ -544,8 +537,248 @@ function event_severity_label($event_type, $notes)
 <?php if (!$is_refresh): ?>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../assets/js/api_client.js"></script>
     <script src="../assets/js/admin_charts.js"></script>
+    <script src="../assets/js/chart_api_bridge.js"></script>
+    <script>
+    (function () {
+        function getStormForm() {
+            return document.getElementById('admin_storm_form');
+        }
+
+        function setCreateMode() {
+            const form = getStormForm();
+            if (!form) {
+                return;
+            }
+
+            const actionInput = form.querySelector('input[name="action"]');
+            const stormIdInput = form.querySelector('input[name="storm_id"]');
+            const levelInput = form.querySelector('#storm_lvl');
+            const descInput = form.querySelector('#storm_desc');
+            const submitBtn = document.getElementById('storm_submit_btn');
+            const cancelBtn = document.getElementById('cancel_edit_btn');
+
+            if (actionInput) {
+                actionInput.value = 'create';
+            }
+            if (stormIdInput) {
+                stormIdInput.value = '';
+            }
+            if (levelInput) {
+                levelInput.value = '';
+            }
+            if (descInput) {
+                descInput.value = '';
+            }
+            if (submitBtn) {
+                submitBtn.value = 'Create Storm';
+            }
+            if (cancelBtn) {
+                cancelBtn.style.display = 'none';
+            }
+        }
+
+        function setUpdateMode(stormId, intensity, description) {
+            const form = getStormForm();
+            if (!form) {
+                return;
+            }
+
+            const actionInput = form.querySelector('input[name="action"]');
+            const stormIdInput = form.querySelector('input[name="storm_id"]');
+            const levelInput = form.querySelector('#storm_lvl');
+            const descInput = form.querySelector('#storm_desc');
+            const submitBtn = document.getElementById('storm_submit_btn');
+            const cancelBtn = document.getElementById('cancel_edit_btn');
+
+            if (actionInput) {
+                actionInput.value = 'update';
+            }
+            if (stormIdInput) {
+                stormIdInput.value = String(stormId);
+            }
+            if (levelInput) {
+                levelInput.value = String(intensity);
+            }
+            if (descInput) {
+                descInput.value = description || '';
+            }
+            if (submitBtn) {
+                submitBtn.value = 'Update Storm';
+            }
+            if (cancelBtn) {
+                cancelBtn.style.display = '';
+            }
+        }
+
+        function refreshAdminContent(nextParams) {
+            const params = nextParams instanceof URLSearchParams ? nextParams : new URLSearchParams(window.location.search);
+            params.delete('edit_id');
+            params.set('refresh', '1');
+            const refreshUrl = 'admin.php?' + params.toString();
+
+            return fetch(refreshUrl)
+                .then(function (res) { return res.text(); })
+                .then(function (html) {
+                    const target = document.getElementById('dashboard_content');
+                    if (target) {
+                        target.innerHTML = html;
+                    }
+
+                    params.delete('refresh');
+                    const nextUrl = params.toString() ? ('admin.php?' + params.toString()) : 'admin.php';
+                    window.history.replaceState({}, '', nextUrl);
+
+                    if (typeof load_admin_charts === 'function') {
+                        load_admin_charts();
+                    }
+                });
+        }
+
+        async function deleteStorm(stormId) {
+            if (!window.confirm('Delete this storm record?')) {
+                return;
+            }
+
+            try {
+                await api_send('../api/admin/storms.php?id=' + encodeURIComponent(stormId), 'DELETE', {});
+                if (typeof window.mars_api_bridge_refresh === 'function') {
+                    await window.mars_api_bridge_refresh();
+                }
+                await refreshAdminContent();
+                const activeStormId = Number((document.querySelector('input[name="storm_id"]') || {}).value || '0');
+                if (activeStormId === stormId) {
+                    setCreateMode();
+                }
+            } catch (err) {
+                window.alert('Delete failed: ' + err.message);
+            }
+        }
+
+        document.addEventListener('submit', async function (event) {
+            if (!event.target || event.target.id !== 'admin_storm_form') {
+                if (!event.target || !event.target.classList || !event.target.classList.contains('filter_form')) {
+                    return;
+                }
+
+                event.preventDefault();
+                const form = event.target;
+                const nextParams = new URLSearchParams(window.location.search);
+                const filterInput = form.querySelector('#filter_lvl');
+                const searchInput = form.querySelector('#search');
+
+                const filterVal = filterInput ? String(filterInput.value).trim() : '';
+                const searchVal = searchInput ? String(searchInput.value).trim() : '';
+
+                nextParams.delete('page');
+                nextParams.delete('edit_id');
+
+                if (filterVal !== '') {
+                    nextParams.set('filter_lvl', filterVal);
+                } else {
+                    nextParams.delete('filter_lvl');
+                }
+
+                if (searchVal !== '') {
+                    nextParams.set('search', searchVal);
+                } else {
+                    nextParams.delete('search');
+                }
+
+                refreshAdminContent(nextParams);
+                return;
+            }
+
+            event.preventDefault();
+
+            const stormForm = event.target;
+            const actionInput = stormForm.querySelector('input[name="action"]');
+            const stormLevelInput = stormForm.querySelector('#storm_lvl');
+            const stormDescInput = stormForm.querySelector('#storm_desc');
+            const stormIdInput = stormForm.querySelector('input[name="storm_id"]');
+
+            const isUpdate = actionInput && actionInput.value === 'update';
+            const payload = {
+                storm_lvl: Number(stormLevelInput ? stormLevelInput.value : 0),
+                storm_desc: stormDescInput ? stormDescInput.value : ''
+            };
+
+            let requestUrl = '../api/admin/storms.php';
+
+            if (isUpdate && stormIdInput) {
+                const stormId = Number(stormIdInput.value || '0');
+                if (stormId <= 0) {
+                    window.alert('Invalid storm id for update.');
+                    return;
+                }
+                requestUrl += '?id=' + encodeURIComponent(stormId);
+            }
+
+            try {
+                await api_send(requestUrl, isUpdate ? 'PUT' : 'POST', payload);
+                if (typeof window.mars_api_bridge_refresh === 'function') {
+                    await window.mars_api_bridge_refresh();
+                }
+                await refreshAdminContent();
+                setCreateMode();
+            } catch (err) {
+                window.alert('Save failed: ' + err.message);
+            }
+        });
+
+        document.addEventListener('click', function (event) {
+            const editBtn = event.target.closest('.js-edit-storm');
+            if (editBtn) {
+                event.preventDefault();
+                const stormId = Number(editBtn.getAttribute('data-storm-id') || '0');
+                const intensity = Number(editBtn.getAttribute('data-storm-intensity') || '0');
+                const description = editBtn.getAttribute('data-storm-desc') || '';
+                if (stormId > 0) {
+                    setUpdateMode(stormId, intensity, description);
+                }
+                return;
+            }
+
+            const deleteBtn = event.target.closest('.js-delete-storm');
+            if (deleteBtn) {
+                event.preventDefault();
+                const stormId = Number(deleteBtn.getAttribute('data-storm-id') || '0');
+                if (stormId > 0) {
+                    deleteStorm(stormId);
+                }
+                return;
+            }
+
+            const cancelBtn = event.target.closest('#cancel_edit_btn');
+            if (cancelBtn) {
+                event.preventDefault();
+                setCreateMode();
+                return;
+            }
+
+            const clearBtn = event.target.closest('.js-filter-clear');
+            if (clearBtn) {
+                event.preventDefault();
+                const nextParams = new URLSearchParams(window.location.search);
+                nextParams.delete('filter_lvl');
+                nextParams.delete('search');
+                nextParams.delete('page');
+                nextParams.delete('edit_id');
+                refreshAdminContent(nextParams);
+            }
+        });
+    })();
+
+    </script>
     <script src="../assets/js/auto_refresh.js"></script>
     <script src="../assets/js/admin.js"></script>
 <?php include '../includes/footer.php';?>
 <?php endif; ?>
+
+
+
+
+
+
+

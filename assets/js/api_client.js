@@ -21,11 +21,14 @@ function api_send(url,method,payload){
         },
         body:JSON.stringify(payload||{})
     }).then(function(res){
-        if(!res.ok){
-            throw new Error("HTTP"+res.status);
-
-        }
-        return res.json();
+        return res.json().catch(function () {
+            return {};
+        }).then(function (json) {
+            if(!res.ok){
+                throw new Error((json && json.error) ? json.error : ("HTTP"+res.status));
+            }
+            return json;
+        });
     }).then(function(json){
         if(!json.success){
             throw new Error(json.error||'API error');

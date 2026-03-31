@@ -161,7 +161,7 @@ if ($rad_row) {
         <h2 class="panel_head">Recent Events</h2>
         <div class="panel_body">
             <?php if (count($event_log) > 0): ?>
-                <ul class="events_list">
+                <ul id="user_event_list" class="events_list">
                     <?php foreach ($event_log as $event): ?>
                         <li>
                             <span class="events_time"><?php echo htmlspecialchars($event['created_at']); ?></span>
@@ -171,7 +171,8 @@ if ($rad_row) {
                     <?php endforeach; ?>
                 </ul>
             <?php else: ?>
-                <p>No events logged.</p>
+                <ul id="user_event_list" class="events_list"></ul>
+                <p id="user_event_empty">No events logged.</p>
             <?php endif; ?>
         </div>
     </article>
@@ -191,8 +192,12 @@ if ($rad_row) {
 <?php if (!$is_refresh): ?>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../assets/js/api_client.js"></script>
 <script src="../assets/js/user_charts.js"></script>
+<script src="../assets/js/chart_api_bridge.js"></script>
 <script src="../assets/js/auto_refresh.js"></script>
 <script src="../assets/js/user.js"></script>
 <?php include '../includes/footer.php'; ?>
 <?php endif; ?>
+
+
