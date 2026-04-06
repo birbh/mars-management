@@ -105,3 +105,21 @@ h2 {
     color: var(--text_dim);
     font-size: 0.76rem;
 }
+.instructions {
+    margin: 12px 0 0;
+    color: var(--text_dim);
+    font-size: 0.76rem;
+    line-height: 1.4;
+}
+
+.instructions a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+}
+
+.instructions a:hover {
+    color: var(--text);
+    border-bottom-color: var(--text);
+}
+

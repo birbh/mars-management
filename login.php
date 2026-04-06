@@ -20,7 +20,7 @@ $stored_hash = $user_row['password_hash'];
 if (password_verify($pass_input, $stored_hash)) {
     $is_valid_pass = true;
 } elseif (hash('sha256', $pass_input) === $stored_hash) {
-    // Legacy support for older SHA-256 seeded users.
+    // Legacy support :: older SHA-256 seeded users.
     $is_valid_pass = true;
     $needs_rehash = true;
 }
@@ -75,11 +75,13 @@ $error = 'Invalid login credentials.';
         <input type="submit" name="submit" value="login">
         <a class="home_btn" href="index.php">Back to console</a>
     </form>
-
+    <p class="instructions">Please refer to <a href="README.md" target="_blank">README.md</a> for instructions about the login process.(credentials are provided in readme.)</p>
     <p class="error"><?php echo htmlspecialchars($error); ?></p>
 </section>
 </main>
 </body>
 </html>
+
+
 
 

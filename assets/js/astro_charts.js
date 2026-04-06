@@ -529,3 +529,7 @@ function load_astro_charts() {
         console.log('Astronaut chart load failed:', err);
     });
 }
+
+window.addEventListener('load', function () {
+    astro_sync_siren_state();
+});

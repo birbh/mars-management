@@ -59,6 +59,31 @@ function astro_event_severity_label(cssClass) {
     return 'Safe';
 }
 
+function astro_set_siren_from_latest(latest) {
+    if (!window.MarsSound || typeof window.MarsSound.setSirenActive !== 'function') {
+        return;
+    }
+
+    const stormIntensity = Number(latest && latest.storm ? latest.storm.intensity || 0 : 0);
+    const radiationStatus = String(latest && latest.radiation ? latest.radiation.status || '' : '').toLowerCase();
+    const powerMode = String(latest && latest.power ? latest.power.mode || '' : '').toLowerCase();
+    const health = Number(latest && latest.health ? latest.health : 0);
+
+    const criticalActive = stormIntensity >= 8
+        || radiationStatus === 'danger'
+        || radiationStatus === 'critical'
+        || powerMode === 'critical'
+        || health < 50;
+
+    window.MarsSound.setSirenActive(criticalActive);
+}
+
+function astro_sync_siren_when_ready() {
+    if (window.MarsSound && typeof window.MarsSound.setSirenActive === 'function') {
+        refresh_astro_panels();
+    }
+}
+
 function astro_render_events(events) {
     const rowsEl = document.getElementById('astro_event_rows');
     const emptyEl = document.getElementById('astro_event_empty');
@@ -144,6 +169,8 @@ async function refresh_astro_panels() {
             astro_set_badge('astro_health_status', 'critical', 'Safe', 'Warn', 'Critical');
         }
 
+        astro_set_siren_from_latest(latest);
+
         astro_render_events(recent && recent.events ? recent.events : []);
 
         const noteEl = document.getElementById('refresh_note_astro');
@@ -181,3 +208,5 @@ setInterval(function () {
 window.addEventListener('mars_api_bridge_updated', function () {
     refresh_astro_all();
 });
+
+window.addEventListener('load', astro_sync_siren_when_ready);

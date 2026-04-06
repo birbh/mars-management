@@ -31,7 +31,7 @@ function db_fetch_one($conn, $sql, $types = '', $params = [])
     $row = $res ? $res->fetch_assoc() : null;
     $stmt->close();
 
-    return $row ?: null;
+    return $row ?: null;                                                                            
 }
 
 function db_fetch_all($conn, $sql, $types = '', $params = [])
@@ -111,3 +111,5 @@ function db_insert_event_cooldown_storm($conn, $storm_id, $event_type, $notes, $
 
     return $rows > 0;
 }
+
+
