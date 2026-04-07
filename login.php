@@ -66,13 +66,13 @@ $error = 'Invalid login credentials.';
 <script src="assets/js/sound_system.js" defer></script>
 </head>
 <body>
+<?php if(isset($_GET['reason']) && $_GET['reason'] === 'session_expired'): ?>
+    <div style="position: absolute; top: 0; left: 0; width: 100%; background: #11382863; color: #ffffff; padding: 12px; text-align: center; font-weight: bold; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+        Your session has expired. Please log in again.
+    </div>
+<?php endif; ?>
+
 <main class="login_shell">
-    <?php if(isset($_GET['reason']) && $_GET['reason'] === 'session_expired'):   ?>  
-        <div style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px; margin-bottom: 20px; text-align: center; border: 1px solid #ef4444; border-radius: 4px;"> 
-        <div class="session_expired">
-            <p>Your session has expired. Please log in again.</p>
-        </div>
-    <?php endif; ?>
     <section class="login_box">
         <h2>Mars Haven Control System</h2>
         <p class="login_sub">authenticated access required</p>
