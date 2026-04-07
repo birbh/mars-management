@@ -26,7 +26,7 @@ also to improve exp. i have included sound effects (exploreee!!! and find)(hint:
 - Gets system health output and warning messages.
 - Dashboard auto refreshes .
 
-### User
+### Worker
 - Sees latest storm, radiation, and power snapshot.
 - Dashboard auto-refreshes .
 
@@ -59,7 +59,7 @@ Password: `admin123`
 Username: `astronaut`
 Email: `astro@marshaven.local`
 Password: `astro123`
-- User
+- Worker
 Username: `user`
 Email: `user@marshaven.local`
 Password: `user123`
