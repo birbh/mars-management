@@ -1,3 +1,21 @@
+(function() {
+    const TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
+    let logoutTimer = setTimeout(triggerLogout, TIMEOUT_MS);
+
+    function triggerLogout() {
+        window.location.href = '../login.php?reason=session_expired';
+    }
+
+    function resetTimer() {
+        clearTimeout(logoutTimer);
+        logoutTimer = setTimeout(triggerLogout, TIMEOUT_MS);
+    }
+
+    // Reset the timer whenever the user interacts with the page
+    ['click', 'mousemove', 'keydown', 'scroll'].forEach(event => {
+        window.addEventListener(event, resetTimer);
+    });
+})();
 function api_get(url){
     return fetch(url,{
         credentials:'same-origin'
@@ -36,5 +54,7 @@ function api_send(url,method,payload){
         return json.data;
     });
 }
+
+
 
 

@@ -69,3 +69,4 @@ Password: `user123`
 ## note
 
 This project is built as a practical combining backend logic, database modeling, and rolebased ui behavior in a single app.
+

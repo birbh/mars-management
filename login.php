@@ -40,12 +40,18 @@ if ($needs_rehash) {
     }
 }
 
+
+session_regenerate_id(true);
+$_SESSION['login_started_at']=time();
+$_SESSION['last_activity_at']=time();
+
 $_SESSION['user_id'] = $user_row['id'];
 $_SESSION['username'] = $user_row['username'];
 $_SESSION['role'] = $user_row['role'];
 header('Location: dashboard/' . $user_row['role'] . '.php');
 exit();
 }
+
 
 $error = 'Invalid login credentials.';
 }
@@ -61,9 +67,15 @@ $error = 'Invalid login credentials.';
 </head>
 <body>
 <main class="login_shell">
-<section class="login_box">
-    <h2>Mars Haven Control System</h2>
-    <p class="login_sub">authenticated access required</p>
+    <?php if(isset($_GET['reason']) && $_GET['reason'] === 'session_expired'):   ?>  
+        <div style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px; margin-bottom: 20px; text-align: center; border: 1px solid #ef4444; border-radius: 4px;"> 
+        <div class="session_expired">
+            <p>Your session has expired. Please log in again.</p>
+        </div>
+    <?php endif; ?>
+    <section class="login_box">
+        <h2>Mars Haven Control System</h2>
+        <p class="login_sub">authenticated access required</p>
 
     <form method="post" action="" class="login_form">
         <label for="login">Username or email</label>
@@ -84,4 +96,4 @@ $error = 'Invalid login credentials.';
 
 
 
-
+ 

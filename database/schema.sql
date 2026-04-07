@@ -50,3 +50,4 @@ CREATE TABLE events(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (storm_id) REFERENCES solar_storms(id) ON DELETE SET NULL
 );
+

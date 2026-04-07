@@ -1,5 +1,8 @@
 <?php
 require_once dirname(__DIR__) . '/includes/bootstrap.php';
+require_once dirname(__DIR__) . '/includes/auth_api.php';
+
+api_session_guard();
 if(isset($_SESSION['user_id'])){
     api_json([
         'success'=>true,
