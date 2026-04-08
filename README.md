@@ -16,8 +16,7 @@ also to improve exp. i have included sound effects (exploreee!!! and find)(hint:
 
 ## Signup
 
-New users can create an account from `signup.php` and choose either `user` or `astronaut`.
-The public signup form does not allow `admin`.
+New users can create an account from `signup.php` and choose `admin`, `user`, or `astronaut`.
 
 ## Roles and dashboards
 ### Admin

@@ -17,7 +17,7 @@ if (isset($_POST['submit'])) {
     $confirm_password = $_POST['confirm_password'] ?? '';
     $role = $_POST['role'] ?? '';
 
-    $allowed_roles = ['user', 'astronaut'];
+    $allowed_roles = ['admin', 'user', 'astronaut'];
 
     if ($csrf_token === '' || !hash_equals($_SESSION['csrf_token'], $csrf_token)) {
         $error = 'Invalid request. Please refresh and try again.';
@@ -92,6 +92,7 @@ if (isset($_POST['submit'])) {
             <label for="role">Role</label>
             <select id="role" name="role" required>
                 <option value="">Select role</option>
+                <option value="admin">Admin</option>
                 <option value="user">User</option>
                 <option value="astronaut">Astronaut</option>
             </select>

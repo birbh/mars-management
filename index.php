@@ -113,7 +113,7 @@ $health_color = '#f5a93b';
 <article class="panel signup_access">
 <div class="panel_head">Signup Access</div>
 <div class="panel_body signup_body">
-<p>Don't have an account? Sign up to get started.<br>Note: <br>The admin portal cant be signed up. <br>To login admin portal pls see readme.md in github.</p>
+<p>Don't have an account? Sign up to get started.</p>
 <a href="signup.php" class="access_btn">Sign Up</a>
 </div>
 </article>
