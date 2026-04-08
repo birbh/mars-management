@@ -67,8 +67,13 @@ $error = 'Invalid login credentials.';
 </head>
 <body>
 <?php if(isset($_GET['reason']) && $_GET['reason'] === 'session_expired'): ?>
-    <div style="position: absolute; top: 0; left: 0; width: 100%; background: #11382863; color: #ffffff; padding: 12px; text-align: center; font-weight: bold; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; background: #cc001b63; color: #ffffff; padding: 12px; text-align: center; font-weight: bold; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
         Your session has expired. Please log in again.
+    </div>
+<?php endif; ?>
+<?php if (isset($_GET["signup"]) && $_GET["signup"] === "success"): ?>
+     <div style="position: absolute; top: 0; left: 0; width: 100%; background: #11382863; color: #ffffff; padding: 12px; text-align: center; font-weight: bold; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+        Account created successfully. Please log in.
     </div>
 <?php endif; ?>
 

@@ -105,7 +105,7 @@ if ($rad_row) {
 <?php if (!$is_refresh): ?>
 <?php include '../includes/header.php'; ?>
 <link rel="stylesheet" href="../assets/css/user.css">
-<h1>Worker Dashboard</h1>
+<h1>User Dashboard</h1>
 <section class="status_bar">
     <div class="status_item">Mission <span class="status_badge status_safe">ACTIVE</span></div>
     <div class="status_item">Network <span class="status_badge status_safe">SYNCED</span></div>

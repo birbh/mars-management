@@ -14,6 +14,11 @@ Shows the important datas in charts(used from::: https://www.chartjs.org).
 
 also to improve exp. i have included sound effects (exploreee!!! and find)(hint:🚨->high intensity)
 
+## Signup
+
+New users can create an account from `signup.php` and choose either `user` or `astronaut`.
+The public signup form does not allow `admin`.
+
 ## Roles and dashboards
 ### Admin
 - Logs storm intensity and description.
@@ -26,7 +31,7 @@ also to improve exp. i have included sound effects (exploreee!!! and find)(hint:
 - Gets system health output and warning messages.
 - Dashboard auto refreshes .
 
-### Worker
+### User
 - Sees latest storm, radiation, and power snapshot.
 - Dashboard auto-refreshes .
 
@@ -45,21 +50,23 @@ visit: [This site](https://marshaven.byethost8.com)
 2. Start XAMPP systems.
 3. Open phpMyAdmin and import `database/schema.sql`.
 4. Confirm dbs connection in `config/db.php`.
-5. then open:::`http://localhost/mars-haven/login.php`
+5. then open:::`http://localhost/mars-management/login.php`
 
-## login credential
+## login credential(for demo only)
 
-You can log in using either username or mail .
+You can log in using either username or email.
 
 - Admin
 Username: `admin`
 Email: `admin@marshaven.local`
 Password: `admin123`
+
 - Astronaut
 Username: `astronaut`
 Email: `astro@marshaven.local`
 Password: `astro123`
-- Worker
+
+- User
 Username: `user`
 Email: `user@marshaven.local`
 Password: `user123`

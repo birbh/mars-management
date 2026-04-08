@@ -1,0 +1,186 @@
+:root {
+    --bg: #0f1720;
+    --panel: #161e2a;
+    --line: #2a3442;
+    --text: #d6dde6;
+    --text_dim: #9eabb9;
+    --accent: #4da3ff;
+    --accent_soft: rgba(77, 163, 255, 0.24);
+    --danger: #ff5a66;
+}
+
+* {
+    box-sizing: border-box;
+}
+ 
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.signup_shell {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.signup_box {
+    width: min(420px, 100%);
+    background: var(--panel);
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.signup_box h2 {
+    margin: 0;
+    font-size: 1.26rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.signup_sub {
+    margin: 8px 0 14px;
+    color: var(--text_dim);
+    font-size: 0.83rem;
+    line-height: 1.35;
+}
+
+.signup_form {
+    display: grid;
+    gap: 9px;
+}
+
+.signup_form label {
+    color: var(--text_dim);
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.signup_form input[type="text"],
+.signup_form input[type="email"],
+.signup_form input[type="password"],
+.signup_form select {
+    width: 100%;
+    background: #111923;
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 11px;
+    font-size: 0.95rem;
+    transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+
+.signup_form input::placeholder {
+    color: #7d8a9a;
+}
+
+.signup_form input:focus,
+.signup_form select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent_soft);
+    background: #0f1822;
+}
+
+.signup_form input[type="submit"],
+.home_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: #1b2533;
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 11px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease, transform 120ms ease;
+}
+
+.signup_form input[type="submit"]:hover,
+.home_btn:hover {
+    border-color: var(--accent);
+    background: #223247;
+    transform: translateY(-1px);
+}
+
+.error {
+    margin: 0 0 12px;
+    color: var(--danger);
+    font-size: 0.84rem;
+    line-height: 1.35;
+    border: 1px solid rgba(255, 90, 102, 0.45);
+    background: rgba(255, 90, 102, 0.1);
+    border-radius: 8px;
+    padding: 8px 10px;
+}
+
+.login_link {
+    margin: 12px 0 0;
+    color: var(--text_dim);
+    text-align: center;
+    font-size: 0.83rem;
+}
+
+.login_link a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+.login_link a:hover {
+    color: var(--text);
+    border-bottom-color: var(--text);
+}
+
+.site_footer {
+    width: min(420px, calc(100% - 28px));
+    margin: 0 auto 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: var(--text_dim);
+    font-size: 0.76rem;
+}
+.instructions {
+    margin: 12px 0 0;
+    color: var(--text_dim);
+    font-size: 0.76rem;
+    line-height: 1.4;
+}
+
+.instructions a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+}
+
+.instructions a:hover {
+    color: var(--text);
+    border-bottom-color: var(--text);
+}
+
+@media (max-width: 520px) {
+    .signup_shell {
+        padding: 12px;
+    }
+
+    .signup_box {
+        border-radius: 10px;
+        padding: 14px;
+    }
+}
+

@@ -118,16 +118,31 @@ body {
     grid-column: span 12;
 }
 
-.login_access {
+.login_access,.signup_access {
     grid-column: span 4;
 }
 
-.login_body {
+.access_grid {
+    margin-bottom: 10px;
+}
+
+.access_grid .login_access,
+.access_grid .signup_access {
+    grid-column: span 6;
+    border-left: 3px solid var(--accent);
+}
+
+.login_body,.signup_body {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
+}
+
+.login_body p,
+.signup_body p {
+    flex: 1 1 240px;
 }
 
 .health_bar {
@@ -213,12 +228,15 @@ tr:nth-child(even) {
 }
 
 @media (max-width: 980px) {
+    .access_grid .login_access,
+    .access_grid .signup_access,
     .storm_monitor,
     .rad_status,
     .pwr_system,
     .sys_health,
     .event_log,
-    .login_access {
+    .login_access,
+    .signup_access {
         grid-column: span 12;
     }
 
@@ -226,5 +244,17 @@ tr:nth-child(even) {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
+    }
+}
+
+@media (max-width: 640px) {
+    .login_body,
+    .signup_body {
+        align-items: stretch;
+    }
+
+    .access_btn {
+        width: 100%;
+        text-align: center;
     }
 }

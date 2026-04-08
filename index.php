@@ -101,6 +101,24 @@ $health_color = '#f5a93b';
 </div>
 </section>
 
+<section class="telemetry_grid access_grid">
+<article class="panel login_access">
+<div class="panel_head">Login Access</div>
+<div class="panel_body login_body">
+<p>Authenticated access is required for mission dashboards.<br>Demo credentials available .</p>
+<a href="login.php" class="access_btn">Login</a>
+</div>
+</article>
+
+<article class="panel signup_access">
+<div class="panel_head">Signup Access</div>
+<div class="panel_body signup_body">
+<p>Don't have an account? Sign up to get started.<br>Note: <br>The admin portal cant be signed up. <br>To login admin portal pls see readme.md in github.</p>
+<a href="signup.php" class="access_btn">Sign Up</a>
+</div>
+</article>
+</section>
+
 <section class="telemetry_grid">
 <article class="panel storm_monitor">
 <div class="panel_head">Storm Monitor</div>
@@ -190,15 +208,8 @@ $health_color = '#f5a93b';
 <?php endif; ?>
 </div>
 </article>
-
-<article class="panel login_access">
-<div class="panel_head">Login Access</div>
-<div class="panel_body login_body">
-<p>Authenticated access is required for mission dashboards.</p>
-<a href="login.php" class="access_btn">Login</a>
-</div>
-</article>
 </section>
+
 </main>
 
 <script src="assets/js/api_client.js"></script>
