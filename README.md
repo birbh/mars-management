@@ -47,7 +47,7 @@ visit: [This site](https://marshaven.byethost8.com)
 4. Confirm dbs connection in `config/db.php`.
 5. then open:::`http://localhost/mars-haven/login.php`
 
-## Demo login data(for demo only)
+## login credential
 
 You can log in using either username or mail .
 
@@ -64,7 +64,6 @@ Username: `user`
 Email: `user@marshaven.local`
 Password: `user123`
 
->These are demo info.. for testing use only.
 
 ## note
 
