@@ -1,9 +1,14 @@
 (function(){
+    var FETCH_INTERVAL_MS = 5000;
+    var FETCH_MIN_GAP_MS = 3500;
     var cache={
         history:null,
         latest:null,
+        events:null,
         lastFetchMs:0
     };
+    var inflightPromise = null;
+    var lastFetchStartMs = 0;
     var readyResolve = null;
     var readyPromise = new Promise(function (resolve) {
         readyResolve = resolve;
@@ -12,13 +17,15 @@
     function hasData(){
         return cache.history && cache.latest;
     }
-    function fetchAll(){
+    function runFetch(){
         return Promise.all([
             api_get('../api/telemetry/history.php?limit=12'),
-            api_get('../api/telemetry/latest.php')
+            api_get('../api/telemetry/latest.php'),
+            api_get('../api/events/recent.php?limit=10')
         ]).then(function(arr){
             cache.history=arr[0];
             cache.latest=arr[1];
+            cache.events=(arr[2] && Array.isArray(arr[2].events)) ? arr[2].events : [];
             cache.lastFetchMs=Date.now();
             if (readyResolve) {
                 readyResolve();
@@ -32,6 +39,21 @@
         }).catch(function(err){
             console.log('API bridge fetch failed:',err);
         });
+    }
+    function fetchAll(){
+        var now = Date.now();
+        if (inflightPromise) {
+            return inflightPromise;
+        }
+        if (now - lastFetchStartMs < FETCH_MIN_GAP_MS) {
+            return Promise.resolve();
+        }
+
+        lastFetchStartMs = now;
+        inflightPromise = runFetch().finally(function(){
+            inflightPromise = null;
+        });
+        return inflightPromise;
     }
     function toStormPayload(){
         if(!hasData()) return null;
@@ -64,6 +86,16 @@
         if(!hasData()) return null;
         return Number(cache.latest.health || 0);
 
+    }
+    function getLatest(){
+        return cache.latest || null;
+    }
+    function getRecentEvents(limit){
+        var rows = Array.isArray(cache.events) ? cache.events : [];
+        if (typeof limit !== 'number' || limit <= 0) {
+            return rows.slice();
+        }
+        return rows.slice(0, limit);
     }
     function installAdminOverrides(){
         if(typeof window.admin_mock_storm_payload==='function'){
@@ -152,9 +184,11 @@
     // allow rfresh
     window.mars_api_bridge_refresh = fetchAll;
     window.mars_api_bridge_ready = readyPromise;
+    window.mars_api_bridge_get_latest = getLatest;
+    window.mars_api_bridge_get_events = getRecentEvents;
 
     fetchAll();
-    setInterval(fetchAll,5000);
+    setInterval(fetchAll,FETCH_INTERVAL_MS);
 })();
 
 

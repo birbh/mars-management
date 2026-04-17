@@ -81,10 +81,27 @@ function user_render_events(events) {
     }).join('');
 }
 
+const USER_REFRESH_MIN_GAP_MS = 1200;
+let user_refresh_inflight = null;
+let user_last_refresh_start = 0;
+
 async function refresh_user_panels() {
     try {
-        const latest = await api_get('../api/telemetry/latest.php');
-        const recent = await api_get('../api/events/recent.php?limit=5');
+        let latest = null;
+        let events = [];
+
+        if (typeof window.mars_api_bridge_get_latest === 'function') {
+            latest = window.mars_api_bridge_get_latest();
+        }
+        if (typeof window.mars_api_bridge_get_events === 'function') {
+            events = window.mars_api_bridge_get_events(5);
+        }
+
+        if (!latest) {
+            latest = await api_get('../api/telemetry/latest.php');
+            const recent = await api_get('../api/events/recent.php?limit=5');
+            events = recent && recent.events ? recent.events : [];
+        }
 
         const health = Number(latest && latest.health ? latest.health : 0);
         user_set_text('user_health_value', String(health) + '%');
@@ -129,7 +146,7 @@ async function refresh_user_panels() {
             }
         }
 
-        user_render_events(recent && recent.events ? recent.events : []);
+        user_render_events(Array.isArray(events) ? events : []);
 
         const noteEl = document.getElementById('refresh_note');
         if (noteEl) {
@@ -143,10 +160,30 @@ async function refresh_user_panels() {
 }
 
 function refresh_user_all() {
-    refresh_user_panels();
-    if (typeof load_user_charts === 'function') {
-        load_user_charts();
+    const now = Date.now();
+
+    if (user_refresh_inflight) {
+        return user_refresh_inflight;
     }
+    if (now - user_last_refresh_start < USER_REFRESH_MIN_GAP_MS) {
+        return Promise.resolve();
+    }
+
+    user_last_refresh_start = now;
+    user_refresh_inflight = Promise.resolve()
+        .then(function () {
+            return refresh_user_panels();
+        })
+        .then(function () {
+            if (typeof load_user_charts === 'function') {
+                load_user_charts();
+            }
+        })
+        .finally(function () {
+            user_refresh_inflight = null;
+        });
+
+    return user_refresh_inflight;
 }
 
 if (typeof window.mars_api_bridge_ready !== 'undefined' && typeof window.mars_api_bridge_ready.then === 'function') {
@@ -155,13 +192,14 @@ if (typeof window.mars_api_bridge_ready !== 'undefined' && typeof window.mars_ap
     });
 } else {
     refresh_user_all();
-}
 
-setInterval(function () {
-    if (!document.hidden) {
-        refresh_user_all();
-    }
-}, 5000);
+    // Keep fallback polling only when the bridge script is not loaded.
+    setInterval(function () {
+        if (!document.hidden) {
+            refresh_user_all();
+        }
+    }, 5000);
+}
 
 window.addEventListener('mars_api_bridge_updated', function () {
     refresh_user_all();

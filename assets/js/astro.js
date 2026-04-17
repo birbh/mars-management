@@ -118,10 +118,27 @@ function astro_render_events(events) {
     }).join('');
 }
 
+const ASTRO_REFRESH_MIN_GAP_MS = 1200;
+let astro_refresh_inflight = null;
+let astro_last_refresh_start = 0;
+
 async function refresh_astro_panels() {
     try {
-        const latest = await api_get('../api/telemetry/latest.php');
-        const recent = await api_get('../api/events/recent.php?limit=10');
+        let latest = null;
+        let events = [];
+
+        if (typeof window.mars_api_bridge_get_latest === 'function') {
+            latest = window.mars_api_bridge_get_latest();
+        }
+        if (typeof window.mars_api_bridge_get_events === 'function') {
+            events = window.mars_api_bridge_get_events(10);
+        }
+
+        if (!latest) {
+            latest = await api_get('../api/telemetry/latest.php');
+            const recent = await api_get('../api/events/recent.php?limit=10');
+            events = recent && recent.events ? recent.events : [];
+        }
 
         if (latest && latest.storm) {
             const intensity = Number(latest.storm.intensity || 0);
@@ -171,7 +188,7 @@ async function refresh_astro_panels() {
 
         astro_set_siren_from_latest(latest);
 
-        astro_render_events(recent && recent.events ? recent.events : []);
+        astro_render_events(Array.isArray(events) ? events : []);
 
         const noteEl = document.getElementById('refresh_note_astro');
         if (noteEl) {
@@ -185,10 +202,30 @@ async function refresh_astro_panels() {
 }
 
 function refresh_astro_all() {
-    refresh_astro_panels();
-    if (typeof load_astro_charts === 'function') {
-        load_astro_charts();
+    const now = Date.now();
+
+    if (astro_refresh_inflight) {
+        return astro_refresh_inflight;
     }
+    if (now - astro_last_refresh_start < ASTRO_REFRESH_MIN_GAP_MS) {
+        return Promise.resolve();
+    }
+
+    astro_last_refresh_start = now;
+    astro_refresh_inflight = Promise.resolve()
+        .then(function () {
+            return refresh_astro_panels();
+        })
+        .then(function () {
+            if (typeof load_astro_charts === 'function') {
+                load_astro_charts();
+            }
+        })
+        .finally(function () {
+            astro_refresh_inflight = null;
+        });
+
+    return astro_refresh_inflight;
 }
 
 if (typeof window.mars_api_bridge_ready !== 'undefined' && typeof window.mars_api_bridge_ready.then === 'function') {
@@ -197,13 +234,14 @@ if (typeof window.mars_api_bridge_ready !== 'undefined' && typeof window.mars_ap
     });
 } else {
     refresh_astro_all();
-}
 
-setInterval(function () {
-    if (!document.hidden) {
-        refresh_astro_all();
-    }
-}, 5000);
+    // Keep fallback polling only when the bridge script is not loaded.
+    setInterval(function () {
+        if (!document.hidden) {
+            refresh_astro_all();
+        }
+    }, 5000);
+}
 
 window.addEventListener('mars_api_bridge_updated', function () {
     refresh_astro_all();
